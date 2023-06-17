@@ -4,7 +4,7 @@ import PageNotFound from './components/pages/PageNotFound/PageNotFound.js';
 import About from './components/pages/About/About.js';
 import Home from './components/pages/Home/Home.js';
 import Post from './components/views/Post/Post.js';
-import AddPost from './components/features/AddPost/AddPost.js';
+import AddPost from './components/pages/AddPost/AddPost.js';
 import EditPost from './components/features/EditPost/EditPost.js';
 import { Routes, Route } from 'react-router-dom';
 import Footer from './components/views/Footer/Footer.js';

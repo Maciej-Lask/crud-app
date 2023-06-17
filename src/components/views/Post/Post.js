@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import { Button } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
 import { removePost } from '../../../redux/postsRedux';
 import { useDispatch } from 'react-redux';
 import { Navigate } from 'react-router-dom';
@@ -32,7 +32,7 @@ const Post = () => {
   if (!postData) return <Navigate to="/" />;
   else
     return (
-      <div>
+      <Container className='w-75'>
         <div className="d-flex justify-content-between my-2">
           <h2>{postData.title}</h2>
           <div>
@@ -70,7 +70,7 @@ const Post = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-      </div>
+      </Container>
     );
 };
 

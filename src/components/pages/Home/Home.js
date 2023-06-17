@@ -1,4 +1,4 @@
-import AllPostsList from "../../features/AllPostsList/AllPostsList";
+import AllPostsList from "../../views/AllPostsList/AllPostsList";
 import { Link } from "react-router-dom";
 const Home = () => {
   return (
