@@ -8,6 +8,8 @@ import { Button, Container } from 'react-bootstrap';
 import { removePost } from '../../../redux/postsRedux';
 import { useDispatch } from 'react-redux';
 import { Navigate } from 'react-router-dom';
+import dateToStr from '../../../utils/dateToStr'; 
+
 
 const Post = () => {
   const { id } = useParams();
@@ -29,10 +31,11 @@ const Post = () => {
     setShowModal(false);
     navigate('/');
   };
+
   if (!postData) return <Navigate to="/" />;
   else
     return (
-      <Container className='w-75'>
+      <Container className="w-75">
         <div className="d-flex justify-content-between my-2">
           <h2>{postData.title}</h2>
           <div>
@@ -51,9 +54,9 @@ const Post = () => {
           </p>
           <p>
             <span className="fw-bold">Published: </span>
-            {postData.publishedDate}
+            {dateToStr(postData.publishedDate)}
           </p>
-          <p>{postData.content}</p>
+          <p dangerouslySetInnerHTML={{ __html: postData.content }} />
         </div>
 
         <Modal show={showModal} onHide={handleCancel}>

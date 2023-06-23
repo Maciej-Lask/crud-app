@@ -1,52 +1,52 @@
 import Button from 'react-bootstrap/Button';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { React, useState } from 'react';
 import shortid from 'shortid';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useForm } from 'react-hook-form';
 
 const PostForm = ({ action, actionText, ...props }) => {
-  const [title, setTitle] = useState(props.title || '');
-  const [author, setAuthor] = useState(props.author || '');
-  const [publishedDate, setPublishedDate] = useState(props.publishedDate || '');
-  const [shortDescription, setShortDescription] = useState(
-    props.shortDescription || ''
-  );
-  const [content, setContent] = useState(props.content || '');
+  const {
+    register,
+    handleSubmit: validate,
+    formState: { errors },
+  } = useForm();
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value);
+  const [formData, setFormData] = useState({
+    title: props.title || '',
+    author: props.author || '',
+    publishedDate: props.publishedDate || new Date(),
+    shortDescription: props.shortDescription || '',
+    content: props.content || ''
+  });
+
+  const [contentError, setContentError] = useState(false);
+  const [dateError, setDateError] = useState(false);
+
+  const handleInputChange = ({ target: { name, value } }) => {
+    setFormData(prevState => ({ ...prevState, [name]: value }));
   };
 
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value);
+  const handleEditorChange = (content) => {
+    setFormData(prevState => ({ ...prevState, content }));
   };
 
-  const handlePublishedDateChange = (event) => {
-    setPublishedDate(event.target.value);
-  };
+  const handleSubmit = () => {
 
-  const handleShortDescriptionChange = (event) => {
-    setShortDescription(event.target.value);
-  };
-
-  const handleContentChange = (event) => {
-    setContent(event.target.value);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    action({
-      id: shortid.generate(),
-      title,
-      author,
-      publishedDate,
-      shortDescription,
-      content
-    });
+    setContentError(!formData.content);
+    setDateError(!formData.publishedDate);
+    if (contentError && dateError)
+    {
+      action({ id: shortid.generate(), ...formData });
+    }
   };
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={validate(handleSubmit)}>
         <div className="mb-3">
           <label htmlFor="title" className="form-label">
             Title
@@ -56,9 +56,16 @@ const PostForm = ({ action, actionText, ...props }) => {
             className="form-control w-50"
             id="title"
             placeholder="Enter title"
-            value={title}
-            onChange={handleTitleChange}
+            name="title"
+            {...register('title', { required: true, minLength: 3 })}
+            value={formData.title}
+            onChange={handleInputChange}
           />
+          {errors.title && (
+            <small className="d-block form-text text-danger mt-2">
+              Title is too short (min is 3)
+            </small>
+          )}
         </div>
         <div className="mb-3">
           <label htmlFor="author" className="form-label">
@@ -69,22 +76,32 @@ const PostForm = ({ action, actionText, ...props }) => {
             className="form-control w-50"
             id="author"
             placeholder="Enter author"
-            value={author}
-            onChange={handleAuthorChange}
+            name="author"
+            {...register('author', { required: true, minLength: 3 })}
+            value={formData.author}
+            onChange={handleInputChange}
           />
+          {errors.author && (
+            <small className="d-block form-text text-danger mt-2">
+              Author is required and should be at least 3 characters long.
+            </small>
+          )}
         </div>
         <div className="mb-3">
-          <label htmlFor="publishedDate" className="form-label">
-            Published
-          </label>
-          <input
-            type="text"
-            className="form-control w-50"
+          <DatePicker
             id="publishedDate"
-            placeholder="Enter publication date"
-            value={publishedDate}
-            onChange={handlePublishedDateChange}
+            selected={formData.publishedDate}
+            onChange={(date) =>
+              handleInputChange({
+                target: { name: 'publishedDate', value: date },
+              })
+            }
           />
+          {dateError && (
+            <small className="d-block form-text text-danger mt-2">
+              Date is required
+            </small>
+          )}
         </div>
         <div className="mb-3">
           <label htmlFor="shortDescription" className="form-label">
@@ -95,22 +112,35 @@ const PostForm = ({ action, actionText, ...props }) => {
             id="shortDescription"
             rows="4"
             placeholder="Enter short description"
-            value={shortDescription}
-            onChange={handleShortDescriptionChange}
+            name="shortDescription"
+            {...register('shortDescription', { required: true, minLength: 20 })}
+            value={formData.shortDescription}
+            onChange={handleInputChange}
           />
+          {errors.shortDescription && (
+            <small className="d-block form-text text-danger mt-2">
+              Short description is required and should have at least 20
+              characters.
+            </small>
+          )}
         </div>
         <div className="mb-3">
           <label htmlFor="content" className="form-label">
             Content
           </label>
-          <textarea
-            className="form-control"
+          <ReactQuill
+            theme="snow"
             id="content"
-            rows="10"
             placeholder="Enter content"
-            value={content}
-            onChange={handleContentChange}
+            name="content"
+            value={formData.content}
+            onChange={handleEditorChange}
           />
+          {contentError && (
+            <small className="d-block form-text text-danger mt-2">
+              Content can't be empty
+            </small>
+          )}
         </div>
         <Button type="submit">{actionText}</Button>
       </form>
@@ -125,7 +155,7 @@ PostForm.propTypes = {
   shortDescription: PropTypes.string,
   content: PropTypes.string,
   author: PropTypes.string,
-  publishedDate: PropTypes.string,
+  publishedDate: PropTypes.instanceOf(Date),
 };
 
 export default PostForm;

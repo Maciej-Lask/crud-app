@@ -4,7 +4,7 @@ import { Card, Row } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styles from './AllPostsList.module.scss';
-
+import dateToStr from '../../../utils/dateToStr';
 const AllPostsList = () => {
   const posts = useSelector(getPosts);
   return (
@@ -21,7 +21,7 @@ const AllPostsList = () => {
                 </Card.Text>
                 <Card.Text>
                   <span className={styles.boldText}>Published: </span>
-                  {post.publishedDate}
+                  {dateToStr(post.publishedDate)}
                 </Card.Text>
                 <Card.Text>{post.shortDescription}</Card.Text>
                 <Link to={`/post/${post.id}`} className="btn btn-primary">
