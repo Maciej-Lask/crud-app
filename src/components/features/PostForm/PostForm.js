@@ -38,7 +38,7 @@ const PostForm = ({ action, actionText, ...props }) => {
 
     setContentError(!formData.content);
     setDateError(!formData.publishedDate);
-    if (contentError && dateError)
+    if (formData.content && formData.publishedDate)
     {
       action({ id: shortid.generate(), ...formData });
     }
