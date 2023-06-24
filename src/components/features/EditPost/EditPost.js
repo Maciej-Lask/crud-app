@@ -25,6 +25,7 @@ const EditPost = () => {
         publishedDate={postData.publishedDate}
         content={postData.content}
         shortDescription={postData.shortDescription}
+        category={postData.category}
       />
     </div>
   );

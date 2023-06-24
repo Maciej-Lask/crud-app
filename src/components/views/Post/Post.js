@@ -52,9 +52,13 @@ const Post = () => {
             <span className="fw-bold">Author: </span>
             {postData.author}
           </p>
-          <p>
+          <p className="mb-0">
             <span className="fw-bold">Published: </span>
             {dateToStr(postData.publishedDate)}
+          </p>
+          <p>
+            <span className="fw-bold">Category: </span>
+            {postData.category}
           </p>
           <p dangerouslySetInnerHTML={{ __html: postData.content }} />
         </div>

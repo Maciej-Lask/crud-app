@@ -7,6 +7,9 @@ import 'react-quill/dist/quill.snow.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
+import { getCategories } from '../../../redux/categoriesRedux';
+import Form from 'react-bootstrap/Form';
 
 const PostForm = ({ action, actionText, ...props }) => {
   const {
@@ -20,26 +23,28 @@ const PostForm = ({ action, actionText, ...props }) => {
     author: props.author || '',
     publishedDate: props.publishedDate || new Date(),
     shortDescription: props.shortDescription || '',
-    content: props.content || ''
+    content: props.content || '',
+    category: props.category || '',
   });
+  const categories = useSelector((state) => getCategories(state));
 
   const [contentError, setContentError] = useState(false);
   const [dateError, setDateError] = useState(false);
+  const [categoryError, setCategoryError] = useState(false);
 
   const handleInputChange = ({ target: { name, value } }) => {
-    setFormData(prevState => ({ ...prevState, [name]: value }));
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleEditorChange = (content) => {
-    setFormData(prevState => ({ ...prevState, content }));
+    setFormData((prevState) => ({ ...prevState, content }));
   };
 
   const handleSubmit = () => {
-
     setContentError(!formData.content);
     setDateError(!formData.publishedDate);
-    if (formData.content && formData.publishedDate)
-    {
+    setCategoryError(!formData.category);
+    if (formData.content && formData.publishedDate && formData.category) {
       action({ id: shortid.generate(), ...formData });
     }
   };
@@ -100,6 +105,30 @@ const PostForm = ({ action, actionText, ...props }) => {
           {dateError && (
             <small className="d-block form-text text-danger mt-2">
               Date is required
+            </small>
+          )}
+        </div>
+        <div className="mb-3">
+          <label htmlFor="category" className="form-label">
+            Category
+          </label>
+          <Form.Select
+            aria-label="Default select example"
+            id="category"
+            name="category"
+            value={formData.category}
+            onChange={handleInputChange}
+          >
+            <option value="">Select category</option>
+            {categories.map((category) => (
+              <option key={shortid.generate()} value={category.id}>
+                {category}
+              </option>
+            ))}
+          </Form.Select>
+          {categoryError && (
+            <small className="d-block form-text text-danger mt-2">
+              Category is required
             </small>
           )}
         </div>
